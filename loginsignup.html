@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login & Signup with Firebase</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px;
+    }
+    .container {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      width: 300px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .message {
+      margin-top: 10px;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Firebase Login & Signup</h2>
+
+  <div class="container">
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button onclick="signup()">Sign Up</button>
+    <button onclick="login()">Login</button>
+    <div class="message" id="message"></div>
+  </div>
+
+  <!-- Firebase SDK and Auth logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+
+    // ✅ Replace with your second Firebase project's config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkHE6baUwnF91K__WuuuWC_eOBM_0KPwc",
+      authDomain: "web-application-project-431b6.firebaseapp.com",
+      databaseURL: "https://web-application-project-431b6-default-rtdb.firebaseio.com",
+      projectId: "web-application-project-431b6",
+      storageBucket: "web-application-project-431b6.appspot.com",
+      messagingSenderId: "63020255045",
+      appId: "1:63020255045:web:807ee59e35d7f8e586602c",
+      measurementId: "G-H0V631B27C"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+
+    // Signup function
+    window.signup = async function() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const message = document.getElementById("message");
+
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        message.style.color = "green";
+        message.textContent = "Signup successful!";
+      } catch (error) {
+        message.style.color = "red";
+        message.textContent = error.message;
+      }
+    };
+
+    // Login function
+    window.login = async function() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const message = document.getElementById("message");
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        message.style.color = "green";
+        message.textContent = "Login successful!";
+      } catch (error) {
+        message.style.color = "red";
+        message.textContent = error.message;
+      }
+    };
+  </script>
+
+</body>
+</html>
