@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Business Application Form</title>
+    <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 0.5rem;
+            margin-top: 0.3rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            margin-top: 1.5rem;
+            padding: 0.7rem 1.5rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .success-message {
+            color: green;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Business Application Form</h1>
+    <form id="businessForm">
+        <label for="businessName">Business Name</label>
+        <input type="text" id="businessName" name="businessName" required />
+
+        <label for="ownerName">Owner's Name</label>
+        <input type="text" id="ownerName" name="ownerName" required />
+
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required />
+
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" required />
+
+        <label for="businessType">Business Type</label>
+        <select id="businessType" name="businessType" required>
+            <option value="">Select a type</option>
+            <option value="Retail">Retail</option>
+            <option value="Service">Service</option>
+            <option value="Manufacturing">Manufacturing</option>
+            <option value="Technology">Technology</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <label for="description">Business Description</label>
+        <textarea id="description" name="description" rows="4" required></textarea>
+
+        <button type="submit">Submit Application</button>
+    </form>
+
+    <div id="message" class=""></div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            try {
+                const firebaseConfig = {
+                    apiKey: "AIzaSyCRTzEvXk7HI7mPP5LjyMz84iDehl5hbLY",
+                    authDomain: "teacherjob-c846e.firebaseapp.com",
+                    databaseURL: "https://teacherjob-c846e-default-rtdb.firebaseio.com",
+                    projectId: "teacherjob-c846e",
+                    storageBucket: "teacherjob-c846e.appspot.com",
+                    messagingSenderId: "641234073348",
+                    appId: "1:641234073348:web:9c1a92ce8e74f572808251",
+                    measurementId: "G-E5EKCVL416"
+                };
+
+                // Initialize Firebase
+                firebase.initializeApp(firebaseConfig);
+                const db = firebase.database();
+
+                const form = document.getElementById('businessForm');
+                const messageDiv = document.getElementById('message');
+
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    console.log("Submit button clicked");
+
+                    const businessName = form.businessName.value.trim();
+                    const ownerName = form.ownerName.value.trim();
+                    const email = form.email.value.trim();
+                    const phone = form.phone.value.trim();
+                    const businessType = form.businessType.value;
+                    const description = form.description.value.trim();
+
+                    if (!businessName || !ownerName || !email || !phone || !businessType || !description) {
+                        messageDiv.textContent = "Please fill in all fields.";
+                        messageDiv.className = "error-message";
+                        return;
+                    }
+
+                    const newApplicationRef = db.ref('businessApplications').push();
+                    newApplicationRef.set({
+                        businessName,
+                        ownerName,
+                        email,
+                        phone,
+                        businessType,
+                        description,
+                        submittedAt: new Date().toISOString()
+                    }, (error) => {
+                        if (error) {
+                            console.error("Error submitting application: ", error);
+                            messageDiv.textContent = "Error submitting application. Please try again.";
+                            messageDiv.className = "error-message";
+                        } else {
+                            console.log("Data submitted successfully");
+                            messageDiv.textContent = "Application submitted successfully!";
+                            messageDiv.className = "success-message";
+                            form.reset();
+                        }
+                    });
+                });
+
+            } catch (err) {
+                console.error("Firebase initialization error", err);
+                const messageDiv = document.getElementById('message');
+                messageDiv.textContent = "Error initializing Firebase.";
+                messageDiv.className = "error-message";
+            }
+        });
+    </script>
+</body>
+</html>
